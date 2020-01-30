@@ -29,7 +29,7 @@ class Actors
     private $job;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Shows", mappedBy="actors")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Shows", mappedBy="actors", cascade={"persist"})
      */
     private $shows;
 

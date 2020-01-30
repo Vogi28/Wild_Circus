@@ -24,7 +24,7 @@ class Location
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Shows", mappedBy="location")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Shows", mappedBy="location", cascade={"persist"})
      */
     private $shows;
 

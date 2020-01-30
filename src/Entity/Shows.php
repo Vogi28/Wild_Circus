@@ -34,22 +34,22 @@ class Shows
     private $description;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Users", inversedBy="shows")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="shows", cascade={"persist"})
      */
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Gallery", mappedBy="shows")
+     * @ORM\OneToMany(targetEntity="App\Entity\Gallery", mappedBy="shows", orphanRemoval=true, cascade={"persist", "remove"})
      */
     private $photo;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Actors", inversedBy="shows")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Actors", inversedBy="shows", cascade={"persist"})
      */
     private $actors;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Location", inversedBy="shows")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Location", inversedBy="shows", cascade={"persist"})
      */
     private $location;
 
@@ -110,7 +110,7 @@ class Shows
         return $this->user;
     }
 
-    public function addUser(Users $user): self
+    public function addUser(User $user): self
     {
         if (!$this->user->contains($user)) {
             $this->user[] = $user;
@@ -119,7 +119,7 @@ class Shows
         return $this;
     }
 
-    public function removeUser(Users $user): self
+    public function removeUser(User $user): self
     {
         if ($this->user->contains($user)) {
             $this->user->removeElement($user);

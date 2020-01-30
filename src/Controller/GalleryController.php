@@ -32,6 +32,7 @@ class GalleryController extends AbstractController
     {
         $gallery = new Gallery();
         $form = $this->createForm(GalleryType::class, $gallery);
+        // dd($form);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
