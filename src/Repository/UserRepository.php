@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Security;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -15,11 +15,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method Security[]    findAll()
  * @method Security[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SecurityRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Security::class);
+        parent::__construct($registry, User::class);
     }
 
     /**

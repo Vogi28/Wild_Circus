@@ -2,44 +2,60 @@
 
 namespace App\Controller;
 
-use App\Entity\Users;
-use App\Form\UsersType;
-use App\Repository\SecurityRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\User;
+use App\Form\UserType;
+use App\Security\Authenticator;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
- * @Route("/users")
+ * @Route("/user")
  */
-class UsersController extends AbstractController
+class UserController extends AbstractController
 {
     /**
      * @Route("/", name="users_index", methods={"GET"})
      */
-    public function index(SecurityRepository $securityRepository): Response
+    public function index(UserRepository $userRepository): Response
     {
         return $this->render('users/index.html.twig', [
-            'users' => $securityRepository->findAll(),
+            'users' => $userRepository->findAll(),
         ]);
     }
 
     /**
-     * @Route("/new", name="users_new", methods={"GET","POST"})
+     * @Route("/registration", name="users_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function registration(Request $request,
+    UserPasswordEncoderInterface $passwordEncoder,
+    GuardAuthenticatorHandler $guardHandler,
+    Authenticator $authenticator,
+    EntityManagerInterface $emi): Response
     {
-        $user = new Users();
-        $form = $this->createForm(UsersType::class, $user);
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                ));
+            $user->setRoles(['ROLE_REGISTERED']);
 
-            return $this->redirectToRoute('users_index');
+            $emi->persist($user);
+            $emi->flush();
+            
+            $this->addFlash('success', 'Registraton succeed');
+
+            return $this->redirectToRoute('home');
         }
 
         return $this->render('users/new.html.twig', [
@@ -51,7 +67,7 @@ class UsersController extends AbstractController
     /**
      * @Route("/{id}", name="users_show", methods={"GET"})
      */
-    public function show(Users $user): Response
+    public function show(User $user): Response
     {
         return $this->render('users/show.html.twig', [
             'user' => $user,
@@ -61,9 +77,9 @@ class UsersController extends AbstractController
     /**
      * @Route("/{id}/edit", name="users_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Users $user): Response
+    public function edit(Request $request, User $user): Response
     {
-        $form = $this->createForm(UsersType::class, $user);
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -81,7 +97,7 @@ class UsersController extends AbstractController
     /**
      * @Route("/{id}", name="users_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, Users $user): Response
+    public function delete(Request $request, User $user): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();

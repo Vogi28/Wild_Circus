@@ -1,39 +1,128 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Shows index{% endblock %}
-
 {% block body %}
-    <h1>Shows index</h1>
+{# tree #}
+<div class="bc-icons-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb blue-grey lighten-5">
+            <li class="breadcrumb-item"><a class="black-text" href="{{ path('home') }}">Home</a><i
+                class="fas fa-angle-double-right mx-2" aria-hidden="true"></i></li>
+            <li class="breadcrumb-item active aria-current="page"">Shows</li>
+        </ol>
+  </nav>
+    {# <nav aria-label="breadcrumb">
+		<ol class="breadcrumb red lighten-4 rounded-0">
+			<li class="breadcrumb-item"> #}
+				{# administrator #}
+					{# <a href="{{ path('home') }}">Homeer</a>
+			</li>
+			<li class="breadcrumb-item active" aria-current="page">
+				Shows
+			</li>
+        </ol>
+    </nav> #}
+</div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Time</th>
-                <th>Description</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for show in shows %}
-            <tr>
-                <td>{{ show.id }}</td>
-                <td>{{ show.title }}</td>
-                <td>{{ show.time ? show.time|date('H:i:s') : '' }}</td>
-                <td>{{ show.description }}</td>
-                <td>
-                    <a href="{{ path('shows_show', {'id': show.id}) }}">show</a>
-                    <a href="{{ path('shows_edit', {'id': show.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	{# title #}
+	<h1>All the shows</h1>
+	{# shows #}
 
+    <div class="container my-5">
+
+		{# administrator #}
+		{% if is_granted('ROLE_ADMIN') %}
+
+			{# add button #}
+			<div class="row">
+				<a href="{{ path('shows_new') }}">
+					<button class="add-button" title="Ajouter">
+						<i data-fa-symbol="add" class="fas fa-plus"></i>
+						<svg class="icon-md">
+							<use xlink:href="#add"></use>
+						</svg>
+					</button>
+				</a>
+			</div>
+		{% endif %}
+
+		{# shows cards #}
+		<div class="row my-5">
+			{% for show in shows %}
+				{% if show.photo is empty %}
+					{% set photo ='' %}
+				{% else %}
+                    {% for photos in show.photo %}
+                        {% set photo = photos %}                    
+    
+				<div class="col my-3">
+					<div class="media">
+                    
+						<img src="{{ photo.photos }}" class="align-self-start mr-4 img-product" width="600px" alt="{{ show.title }}">
+					{% endfor %}
+				{% endif %}
+                    	<div class="media-body">
+							<h5 class="my-3">{{ show.title }}</h5>
+                            <h5 ="my-3"> Duration : {{ show.time ? show.time|date('H:i') : '' }}</h5>
+							<p>{{ show.description }}</p>
+
+							{# button #}
+							<div class="d-flex justify-content-center my-3">
+
+								{# show button #}
+								<div class="mx-2">
+									<a href="{{ path('shows_show', {'id': show.id}) }}">
+										<button class="show-button" title="Afficher">
+											<i data-fa-symbol="show" class="fas fa-eye"></i>
+											<svg class="icon-md">
+												<use xlink:href="#show"></use>
+											</svg>
+										</button>
+									</a>
+								</div>
+
+								{# add to basket button #}
+								<div class="mx-2">
+									{# professional #}
+									{# {% if is_granted('ROLE_PRO') and reduc is defined and not null %}
+										<a href="{{ path('panier_add', {'id': article.id, 'promo': reduc} )}}">
+										{% elseif promo is defined and not null %}
+											<a href="{{ path('panier_add', {'id': article.id, 'promo': promo} )}}">
+											{% else %}
+												<a href="{{ path('panier_add', {'id': article.id, 'promo': 0} )}}">
+												{% endif %}
+												<button class="add-basket-button" title="Ajouter au panier">
+													<i data-fa-symbol="basket" class="fas fa-shopping-cart text-success"></i>
+													<svg class="icon-md">
+														<use xlink:href="#basket"></use>
+													</svg>
+												</button>
+											</a>
+										</div> #}
+										{# administrator #}
+										{% if is_granted('ROLE_ADMIN') %}
+											{# edit button #}
+											<div class="mx-2">
+												<a href="{{ path('shows_edit', {'id': show.id}) }}">
+													<button class="edit-button" title="Modifier">
+														<i data-fa-symbol="edit" class="fas fa-pen"></i>
+														<svg class="icon-md">
+															<use xlink:href="#edit"></use>
+														</svg>
+													</button>
+												</a>
+											</div>
+										{% endif %}
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+    {% if is_granted('ROLE_ADMIN') %}
+    
     <a href="{{ path('shows_new') }}">Create new</a>
+    {% endif %}
+            
 {% endblock %}
+

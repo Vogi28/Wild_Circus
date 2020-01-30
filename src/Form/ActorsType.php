@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Actors;
+use App\Entity\Shows;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,7 +16,12 @@ class ActorsType extends AbstractType
         $builder
             ->add('name')
             ->add('job')
-            ->add('shows')
+            ->add('shows', EntityType::class, [
+                'class' => Shows::class,
+                'choice_label' => 'title',
+                'expanded' => true,
+                'multiple' => true
+            ])
         ;
     }
 
