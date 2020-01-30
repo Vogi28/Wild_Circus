@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{# tree #}
+<div class="bc-icons-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb blue-grey lighten-5">
+            <li class="breadcrumb-item"><a class="black-text" href="{{ path('home') }}">Home</a><i
+                class="fas fa-angle-double-right mx-2" aria-hidden="true"></i></li>
+            <li class="breadcrumb-item active aria-current="page"">Gallery</li>
+        </ol>
+  </nav>
+    {# <nav aria-label="breadcrumb">
+		<ol class="breadcrumb red lighten-4 rounded-0">
+			<li class="breadcrumb-item"> #}
+				{# administrator #}
+					{# <a href="{{ path('home') }}">Homeer</a>
+			</li>
+			<li class="breadcrumb-item active" aria-current="page">
+				Shows
+			</li>
+        </ol>
+    </nav> #}
+</div>
+
+    {# galleries #}
+    <h1>Gallery index</h1>
+    <div class="container my-5">
+		{# administrator #}
+		{% if is_granted('ROLE_ADMIN') %}
+			{# add button #}
+			<div class="row">
+				<a href="{{ path('gallery_new') }}">
+					<button class="add-button" title="Add">
+						<i data-fa-symbol="add" class="fas fa-plus"></i>
+						<svg class="icon-md">
+							<use xlink:href="#add"></use>
+						</svg>
+					</button>
+				</a>
+			</div>
+        {% endif %}
+
+        <div class="container-fluid">
+            <div class="row">
+                {% for gallery in galleries %}
+                    <div class="col-3 mx-auto">
+                        <a href="{{ path('shows_show', {'id': gallery.id}) }}"><img width="450px" src="{{ gallery.photos }}" alt=""></a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="mx-2">
+                                <a href="{{ path('shows_edit', {'id': gallery.id}) }}">
+                                    <button class="edit-button" title="Modifier">
+                                        <i data-fa-symbol="edit" class="fas fa-pen"></i>
+                                        <svg class="icon-md">
+                                            <use xlink:href="#edit"></use>
+                                        </svg>
+                                    </button>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+{% endblock %}
